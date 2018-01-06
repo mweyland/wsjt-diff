@@ -3,10 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <title>FIXME</title>
+
+
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="leaflet.css">
+
+    <!-- for the time being, externalize later -->
+    <style>
+        html, body{
+            height: 100%;
+        }
+        #map{
+            height: 80%;
+            width: 100%;
+            background-color: yellow;
+        }
+        #footer{
+            height: 20%;
+            background-color: cyan;
+        }
+        #settings{
+            float: left;
+            height: 100%;
+            width: 50%;
+        }
+        #dropzone{
+            float: right;
+            height: 100%;
+            width: 50%;
+            background-color: blueviolet;
+        }
+
+    </style>
+
 </head>
 
 <body>
+    <div id="map"></div>
+    <div id="footer">
+        <div id="settings">Settings</div>
+        <div id="dropzone">Drop File here</div>
+
+    </div>
+
+
+
     <div id="testbox"></div>
+
+    <script src="leaflet.js"></script>
+    <script src="wsjt-parser.js"></script>
+    <!-- for the time being, externalize later -->
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZm94dHJvdHQxMiIsImEiOiJjamMzamRmd3gwdDI5MzNyNmYyYzR3MXo2In0.zliegd2CbZ_LzzShoSQCvw', {
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'your.mapbox.access.token'
+        }).addTo(map);
+    </script>
+
 </body>
-<script src="code.js"></script>
-</html> 
+</html>
