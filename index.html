@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>FIXME</title>
+<title>WSJT-Diff</title>
 
 
     <link rel="stylesheet" href="bootstrap.min.css">
@@ -10,52 +10,64 @@
 
     <!-- for the time being, externalize later -->
     <style>
-        html, body{
+
+        html, body, #container, .row {
             height: 100%;
         }
-        #map{
-            height: 80%;
-            width: 100%;
-            background-color: yellow;
-        }
-        #footer{
-            height: 20%;
-            background-color: cyan;
-        }
-        #settings{
-            float: left;
+        #map {
             height: 100%;
-            width: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        #infocard{
+            margin:15px 0 15px 0;
         }
         #dropzone{
-            float: right;
-            height: 100%;
-            width: 50%;
-            background-color: blueviolet;
+            color: #ccc;
+            border-style: dashed;
+            border-color: #ccc;
+            line-height: 200px;
+            text-align: center;
+            border-radius: 5px;
         }
-
+        #dropzone.active{
+            border-style: solid;
+            border-color: #35a2ff;
+            background-color: #bfe3ff;
+            color: #0001ff
+        }
     </style>
 
 </head>
 
 <body>
-    <div id="map"></div>
-    <div id="footer">
-        <div id="settings">Settings</div>
-        <div id="dropzone" ondrop="drop(event);" ondragover="dragOver(event)" ondragend="dragEnd(event)">Drop File here</div>
-
+<div class="container-fluid" id="container">
+    <div class="row">
+    <div id="map" class="col-md-10"></div>
+    <div id="sidebar" class="col-md-2">
+        <div class="card" id="infocard">
+            <div class="card-body">
+                <h5 class="card-title">WSJT Diff</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Geographical Diff of WSJT Logfiles</h6>
+                <p class="card-text">This is a small project that aims to provide a nice interface
+                to compare different WSJT logfiles.
+                All code is free and online on Github.
+               </p>
+                <p class="font-weight-light"> Created by MrCircuitmatt and HB3YMB</p>
+                <a href="https://github.com/mweyland/wsjt-diff" target="_blank" class="card-link">WSJT-Diff on Github</a>
+            </div>
+        </div>
+        <div id="dropzone" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondrop="drop(event)">
+            Drop your WSJT Log here!
+        </div>
     </div>
-
-
-
-    <div id="testbox"></div>
-
-    <script src="leaflet.js"></script>
-    <script src="wsjt-parser.js"></script>
-    <script src="representations.js"></script>
-
+    </div>
+</div>
 
     <!-- debug -->
+<script src="leaflet.js"></script>
+<script src="wsjt-parser.js"></script>
+<script src="representations.js"></script>
+
     <script src="vars.js"></script>
 
 
@@ -74,10 +86,14 @@
 
         function dragOver(ev) {
             ev.preventDefault();
+
+            addClass(document.getElementById("dropzone"), "active");
         }
 
         function dragEnd(ev) {
             ev.preventDefault();
+
+            removeClass(document.getElementById("dropzone"), "active")
         }
 
         //handler for the drop and drag
@@ -92,18 +108,18 @@
                 for (var i=0; i < dt.items.length; i++) {
                     if (dt.items[i].kind == "file") {
                         var f = dt.items[i].getAsFile();
-                        console.log("... file[" + i + "].name = " + f.name);
                         parseDroppedFile(f);
                     }
                 }
             } else {
                 // Use DataTransfer interface to access the file(s)
                 for (var i=0; i < dt.files.length; i++) {
-                    console.log("... file[" + i + "].name = " + dt.files[i].name);
                     parseDroppedFile(f);
                 }
             }
-        }
+
+             removeClass(document.getElementById("dropzone"), "active")
+         }
 
         function parseDroppedFile(file){
             console.log("Parsing dropped file");
@@ -112,7 +128,7 @@
             reader.readAsText(file);
             reader.onloadend = function(e){
                 console.log(e);
-                console.log(reader.result)
+                //console.log(reader.result)
                 parseText(reader.result, file.name);
             }
         }
