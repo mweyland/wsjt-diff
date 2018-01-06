@@ -52,6 +52,8 @@
 
     <script src="leaflet.js"></script>
     <script src="wsjt-parser.js"></script>
+    <script src="representations.js"></script>
+
 
     <!-- debug -->
     <script src="vars.js"></script>
@@ -88,14 +90,14 @@
                     if (dt.items[i].kind == "file") {
                         var f = dt.items[i].getAsFile();
                         console.log("... file[" + i + "].name = " + f.name);
-                        parseDroppedFile(f);
+                        readDroppedFile(f);
                     }
                 }
             } else {
                 // Use DataTransfer interface to access the file(s)
                 for (var i=0; i < dt.files.length; i++) {
                     console.log("... file[" + i + "].name = " + dt.files[i].name);
-                    parseDroppedFile(f);
+                    readDroppedFile(f);
                 }
             }
         }
@@ -108,29 +110,30 @@
             reader.onloadend = function(e){
                 console.log(e);
                 console.log(reader.result)
-
-                var res1 = wsjt_partition_log(reader.result);
-                console.log(res1);
-
-                //display first log
-                //very rudimentary, to be extended
-                console.log("display first log")
-                for(t in res1){
-                    console.log(t);
-                    for(r in res1[t]){
-                        //console.log(r);
-                        if(res1[t][r].hasOwnProperty('pos')){
-                            var marker = L.marker(res1[t][r].pos).addTo(map);
-                            console.log("added marker to map");
-                        }
-                    }
-                }
+                parseText(reader.result);
             }
+        }
+
+        function parseText(text){
+            var wsjt_timeHashmap = wsjt_partition_log(text);
+
+            var log = new LogRepresentation(wsjt_timeHashmap);
+            log.addTo(map)
+
+            //zoom map to bounds
+            map.fitBounds(log.getBounds());
+
         }
 
 
 
 
+
+
+
+        // FOR YOUR PLEASURE
+        // COMMENT IN PRODUCTION
+        parseText(log1);
     </script>
 
 </body>
