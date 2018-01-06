@@ -3,8 +3,9 @@
  */
 
     //this is how you create a class in JS
-var LogRepresentation = function(_input){
+var LogRepresentation = function(_input, _name){
         //local vars
+        this.name = _name;
         this.hashByTime = _input;
         this.hashByLoc = {};
 
@@ -76,8 +77,10 @@ LogRepresentation.prototype.setupMarkerLayer = function(){
 
 };
 
-LogRepresentation.prototype.addTo = function(map){
+LogRepresentation.prototype.addTo = function(map, control){
     this.markerLayer.addTo(map);
+    control.addOverlay(this.markerLayer, this.name)
+
 };
 LogRepresentation.prototype.getBounds = function(){
     return this.markerLayer.getBounds();

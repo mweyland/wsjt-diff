@@ -5,7 +5,7 @@
 <title>FIXME</title>
 
 
-    <link rel="stylesheet" href="normalize.css">
+    <!-- <link rel="stylesheet" href="normalize.css"> -->
     <link rel="stylesheet" href="leaflet.css">
 
     <!-- for the time being, externalize later -->
@@ -62,12 +62,15 @@
     <!-- for the time being, externalize later -->
     <script>
         var map = L.map('map').setView([47.18926, 8.17503], 10);
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZm94dHJvdHQxMiIsImEiOiJjamMzamRmd3gwdDI5MzNyNmYyYzR3MXo2In0.zliegd2CbZ_LzzShoSQCvw', {
+        var tileLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZm94dHJvdHQxMiIsImEiOiJjamMzamRmd3gwdDI5MzNyNmYyYzR3MXo2In0.zliegd2CbZ_LzzShoSQCvw', {
             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
             maxZoom: 18,
             id: 'mapbox.streets',
             accessToken: 'pk.eyJ1IjoiZm94dHJvdHQxMiIsImEiOiJjamMzamRmd3gwdDI5MzNyNmYyYzR3MXo2In0.zliegd2CbZ_LzzShoSQCvw'
-        }).addTo(map);
+        });
+        tileLayer.addTo(map);
+        var controls = L.control.layers({"Mapbox Base": tileLayer},{},{collapsed: false});
+        controls.addTo(map)
 
         function dragOver(ev) {
             ev.preventDefault();
@@ -110,15 +113,15 @@
             reader.onloadend = function(e){
                 console.log(e);
                 console.log(reader.result)
-                parseText(reader.result);
+                parseText(reader.result, file.name);
             }
         }
 
-        function parseText(text){
+        function parseText(text, name){
             var wsjt_timeHashmap = wsjt_partition_log(text);
 
-            var log = new LogRepresentation(wsjt_timeHashmap);
-            log.addTo(map)
+            var log = new LogRepresentation(wsjt_timeHashmap, name);
+            log.addTo(map, controls)
 
             //zoom map to bounds
             map.fitBounds(log.getBounds());
@@ -133,7 +136,7 @@
 
         // FOR YOUR PLEASURE
         // COMMENT IN PRODUCTION
-        parseText(log1);
+        parseText(log1, "Demo Log");
     </script>
 
 </body>
