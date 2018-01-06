@@ -36,17 +36,22 @@ function decode_from_line(line)
 
 
     //test if the last 4 chars are parseable as maidenhead locator
-    try{
+    try
+    {
         var parts = ret.msg.split(" ");
         var locator = parts[parts.length-1];
 
-        if(locator.length == 4){
+        // RR73 is misued by some and is in the middle of the arctic ocean so we just ignore that one.
+        if(locator.length == 4 && locator != "RR73")
+        {
             //could be a locator
-            ret.pos = maidenhead_to_latlon(locator)
+            ret.pos = maidenhead_to_latlon(locator);
         }
 
         //console.log(parts);
-    }catch(e){
+    }
+    catch(e)
+    {
         //console.log("Failed to parse maidenhead locator for msg: "+ret.msg+" possible locator: "+locator);
     }
 
