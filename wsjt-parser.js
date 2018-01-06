@@ -25,31 +25,57 @@ function wsjt_partition_log(text)
 function decode_from_line(line)
 {
     // FIXME: We could sanity-check here but since this is js all hope ist lost anyway.
-    var message = line.substr(24).trim();
+    var ret =
+        {
+            ts:   line.substr(0, 6),
+            snr:  parseInt(line.substr(7,3)),
+            //dt:   parseFloat(line.substr(11,4)),
+            freq: parseInt(line.substr(16,4)),
+            msg:  line.substr(24).trim()
+        };
+
 
     //test if the last 4 chars are parseable as maidenhead locator
     try{
-        var parts = message.split(" ");
+        var parts = ret.msg.split(" ");
         var locator = parts[parts.length-1];
 
-        if(locator.lenght == 4){
+        if(locator.length == 4){
             //could be a locator
-
+            ret.pos = maidenhead_to_latlon(locator)
         }
 
-        console.log(parts);
+        //console.log(parts);
     }catch(e){
-        console.log("Failed to parse maidenhead locator for msg: "+message+" possible locator: "+locator);
+        //console.log("Failed to parse maidenhead locator for msg: "+ret.msg+" possible locator: "+locator);
     }
 
-    return {
-        ts:   line.substr(0, 6),
-        snr:  parseInt(line.substr(7,3)),
-        //dt:   parseFloat(line.substr(11,4)),
-        freq: parseInt(line.substr(16,4)),
-        msg:  message
-    };
+    return ret
 }
+
+/*
+* Parses a locator to a lat/lon pair, only parses 4 char locators for now
+* */
+function maidenhead_to_latlon(string){
+    //validate
+    string = string.toUpperCase();
+    if(/[A-R]{2}[0-9]{2}/.test(string) == false){
+        throw "invalid char";
+    }
+
+    var bigLon = string.charCodeAt(0);
+    var bigLat = string.charCodeAt(1);
+    var midLon = parseInt(string[2]);
+    var midLat = parseInt(string[3]);
+
+    var lon = -180+(bigLon-65)*20 + midLon*2 +9;
+    var lat = -90+(bigLat-65)*10 + midLat +4.5;
+
+    //console.log("Extracted: "+lon+","+lat);
+
+    return [lat, lon]
+}
+
 
 function index_partition(p)
 {

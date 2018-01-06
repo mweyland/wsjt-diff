@@ -102,10 +102,34 @@
 
         function parseDroppedFile(file){
             console.log("Parsing dropped file");
+            console.log(file);
+            var reader = new FileReader();
+            reader.readAsText(file);
+            reader.onloadend = function(e){
+                console.log(e);
+                console.log(reader.result)
+
+                var res1 = wsjt_partition_log(reader.result);
+                console.log(res1);
+
+                //display first log
+                //very rudimentary, to be extended
+                console.log("display first log")
+                for(t in res1){
+                    console.log(t);
+                    for(r in res1[t]){
+                        //console.log(r);
+                        if(res1[t][r].hasOwnProperty('pos')){
+                            var marker = L.marker(res1[t][r].pos).addTo(map);
+                            console.log("added marker to map");
+                        }
+                    }
+                }
+            }
         }
 
-        var res1 = wsjt_partition_log(log1);
-        console.log(res1);
+
+
 
     </script>
 
