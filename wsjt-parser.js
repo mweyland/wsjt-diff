@@ -64,8 +64,8 @@ function maidenhead_to_latlon(string){
     var midLon = parseInt(string[2]);
     var midLat = parseInt(string[3]);
 
-    var lon = -180+(bigLon-65)*20 + midLon*2 +9;
-    var lat = -90+(bigLat-65)*10 + midLat +4.5;
+    var lon = -180+(bigLon-65)*20 + midLon*2 + 1;
+    var lat = -90+(bigLat-65)*10 + midLat*1 + 0.5;
 
     //console.log("Extracted: "+lon+","+lat);
 
