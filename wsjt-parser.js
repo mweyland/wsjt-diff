@@ -34,27 +34,18 @@ function decode_from_line(line)
             msg:  line.substr(24).trim()
         };
 
-
-    //test if the last 4 chars are parseable as maidenhead locator
-    try
+    var locator = extract_locator(ret.msg);
+    if(locator)
     {
-        var parts = ret.msg.split(" ");
-        var locator = parts[parts.length-1];
-
-        // RR73 is misued by some and is in the middle of the arctic ocean so we just ignore that one.
-        if(locator.length == 4 && locator != "RR73")
+        try
         {
-            //could be a locator
             ret.pos = maidenhead_to_latlon(locator);
         }
-
-        //console.log(parts);
+        catch(e)
+        {
+            //console.log("Failed to parse maidenhead locator for msg: "+ret.msg+" possible locator: "+locator);
+        }
     }
-    catch(e)
-    {
-        //console.log("Failed to parse maidenhead locator for msg: "+ret.msg+" possible locator: "+locator);
-    }
-
     return ret
 }
 
@@ -140,9 +131,9 @@ function extract_locator(msg)
 {
     // Try to extract a locator from a decoded message. Locators are found in the
     // "CQ" transmission as well as in the follow-up response.
+    var tokens = msg.trim().split(" ");
     if(msg.startsWith("CQ "))
     {
-        var tokens = msg.trim().split(" ");
         if(tokens.length != 3)
         {
             if(tokens[1] == "DX")
@@ -161,6 +152,16 @@ function extract_locator(msg)
             return null;
         }
         return tokens[2];
+    }
+    if(tokens.length == 3)
+    {
+        //test if the last 4 chars are parseable as maidenhead locator
+        var locator = tokens[2];
+        // RR73 is misued by some and is in the middle of the arctic ocean so we just ignore that one.
+        if(locator.length == 4 && locator != "RR73")
+        {
+            return locator;
+        }
     }
     return null;
 }
