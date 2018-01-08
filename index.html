@@ -57,7 +57,7 @@
             </div>
         </div>
         <div id="dropzone" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondrop="drop(event)">
-            Drop your WSJT Log here!
+            Drop your WSJT ALL.TXT here!
         </div>
     </div>
     </div>
@@ -65,6 +65,7 @@
 
     <!-- debug -->
 <script src="leaflet.js"></script>
+<script src="cake-marker.js"></script>
 <script src="wsjt-parser.js"></script>
 <script src="representations.js"></script>
 
@@ -146,8 +147,10 @@
 
 
 
-
-
+        //marker testing:
+        //TODO get my nice HSV color chooser in here for some nice colors
+        var testMarker = L.marker.cakeMarker([47.18926, 8.17503],{pieces: [[180,"#F00"],[30, "#0F0"],[40, "#00F"],[50,"#F0F"]]})
+        testMarker.addTo(map);
 
 
         // FOR YOUR PLEASURE
