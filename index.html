@@ -85,6 +85,10 @@
         var controls = L.control.layers({"Mapbox Base": tileLayer},{},{collapsed: false});
         controls.addTo(map)
 
+
+        var logComparator = new LogComparator("Log comparison");
+        logComparator.addTo(map, controls);
+
         function dragOver(ev) {
             ev.preventDefault();
 
@@ -140,6 +144,7 @@
             var log = new LogRepresentation(wsjt_timeHashmap, name);
             log.addTo(map, controls)
 
+            logComparator.addLog(wsjt_timeHashmap, name);
             //zoom map to bounds
             map.fitBounds(log.getBounds());
 

@@ -19,6 +19,15 @@ L.SVG.include ({
         }
 
     },
+    _removeCake: function(layer){
+        for(p in layer._paths){
+            L.DomUtil.remove(layer._paths[p])
+        }
+        for(p in layer._outlines) {
+            L.DomUtil.remove(layer._outlines[p])
+        }
+        delete  this._layers[L.Util.stamp(layer)];
+    },
     _updateCakeMarker: function (layer) {
         var c = layer._point,
             r = layer._radius,
@@ -127,7 +136,12 @@ L.Marker.CakeMarker = L.Path.extend({
         this._reset();
         this._renderer._addCake(this);
     },
+    onRemove: function (){
+        console.log("Remove here")
 
+        this._renderer._removeCake(this);
+
+    },
     setLatLng: function (latlng) {
         this._latlng = latlng;
         this.redraw();
@@ -204,4 +218,4 @@ L.Marker.CakeMarker = L.Path.extend({
 
 L.marker.cakeMarker = function(latlng, options) {
     return new L.Marker.CakeMarker(latlng, options)
-}
+};
