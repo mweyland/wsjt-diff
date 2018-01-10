@@ -4,13 +4,14 @@
 /* this is the actual rendering code */
 L.SVG.include ({
     _initCake: function(layer){
+        //console.log("init path");
         layer._paths = [];
         layer._outlines = [];
         this._layers[L.Util.stamp(layer)] = layer;
         if (!this._rootGroup) { this._initContainer(); }
     },
     _addCake: function(layer){
-        console.log("adding paths",layer._paths);
+        //console.log("adding paths",layer._paths);
         for(p in layer._paths){
             this._rootGroup.appendChild(layer._paths[p]);
         }
@@ -46,6 +47,9 @@ L.SVG.include ({
             curAngle = curAngle + cR[p];
         }
         //curAngle should now be 2*Pi...
+        if(curAngle > 2*Math.PI+0.01 || curAngle < 2*Math.PI-0.01){
+            console.error("CakeMarker: the angles don't add up, curAngle:", curAngle, " all pieces:",cR);
+        }
 
         //console.log(curAngle, iP)
 
@@ -55,9 +59,16 @@ L.SVG.include ({
             //something has changed...
             //TODO we should remove the old paths and then add the new paths
             //(Only needed if we want to do dynamic updates to existing markers)
+            for(p in layer._paths){
+                L.DomUtil.remove(layer._paths[p])
+            }
+            for(p in layer._outlines) {
+                L.DomUtil.remove(layer._outlines[p])
+            }
+
             layer._outlines = [];
             layer._paths = [];
-            console.error("TODO, new paths", len, layer._paths);
+            //console.error("TODO, new paths", len, layer._paths);
         }
 
         if(cR.length > 1){
@@ -98,7 +109,7 @@ L.SVG.include ({
                 p.setAttribute("style","stroke:"+layer._colors[0]+";fill:"+layer._colors[0]);
                 p.setAttribute("fill-opacity","0.5");
                 p.setAttribute("stroke-width","5");
-                console.log("layer:" ,layer," colors",layer._colors[i]);
+                //console.log("layer:" ,layer," colors",layer._colors[i]);
                 layer._paths.push(p);
             }else {
                 var i = layer._paths.length - 1; //last element...
@@ -133,7 +144,7 @@ L.Marker.CakeMarker = L.Path.extend({
         this._pieces = options.pieces;
         this._calcRatios();
 
-        console.log("initialized a cake marker with "+this._pieces.length+ "pieces")
+        //console.log("initialized a cake marker with "+this._pieces.length+ "pieces")
         //console.log(this._pieces);
 
     },
@@ -144,8 +155,6 @@ L.Marker.CakeMarker = L.Path.extend({
         this._renderer._addCake(this);
     },
     onRemove: function (){
-        console.log("Remove here")
-
         this._renderer._removeCake(this);
 
     },
@@ -181,13 +190,14 @@ L.Marker.CakeMarker = L.Path.extend({
         var radius = this.options.radius;
         var point = this._point;
         var pieces = this.options.pieces;
+        //TODO rework array to object (pieces)
         var absSum = pieces.map(function(x){return Math.abs(x[0])}).reduce(function(a,b){return a+b});
 
         //how much of the full cake each piece should take
         this._circleRatios = pieces.map(function(x){return 2*Math.PI*Math.abs(x[0])/absSum});
         this._colors = pieces.map(function(x){return x[1]})
 
-        console.log("Ratios: ",this._circleRatios)
+        //console.log("Ratios: ",this._circleRatios)
     },
     _project: function () {
         this._point = this._map.latLngToLayerPoint(this._latlng);

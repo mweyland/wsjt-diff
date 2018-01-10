@@ -105,8 +105,10 @@ var LogComparator = function(_name){
 LogComparator.prototype.addLog = function(log, name){
     //clear all markers here
     for(m in this._curMarkers){
-        this._curMarkers[m].remove()
+        this._curMarkers[m].removeFrom(this.markerLayer);
+
     }
+    this._curMarkers = [];
 
 
     //got a time based hashmap and now divide it into a locator-based hashmap
@@ -172,6 +174,7 @@ LogComparator.prototype.setupMarkerLayer = function () {
         this._curMarkers.push(cakeMarker);
         cakeMarker.addTo(this.markerLayer);
     }
+    console.info("Filled the MarkerLayer with ",this._curMarkers.length, "Markers")
 };
 
 LogComparator.prototype.addTo = function (map, control) {
