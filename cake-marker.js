@@ -41,8 +41,8 @@ L.SVG.include ({
         var curAngle = 0;
         var iP = [];
         for( p in cR){
-            //TODO last bit of the code is probably not what we want...
-            iP.push([c.x+Math.sin(curAngle)*r, c.y+Math.cos(curAngle)*r, curAngle >= Math.PI]);
+            iP.push([c.x+Math.sin(curAngle)*r, c.y+Math.cos(curAngle)*r, cR[p] < Math.PI]);
+            //console.log("Current angle: ", curAngle, " piece angle:"+cR[p], "Current decision: "+curAngle >= Math.PI);
             curAngle = curAngle + cR[p];
         }
         //curAngle should now be 2*Pi...
@@ -54,6 +54,7 @@ L.SVG.include ({
         if(hasChanged ){
             //something has changed...
             //TODO we should remove the old paths and then add the new paths
+            //(Only needed if we want to do dynamic updates to existing markers)
             layer._outlines = [];
             layer._paths = [];
             console.error("TODO, new paths", len, layer._paths);
@@ -64,7 +65,6 @@ L.SVG.include ({
             for(var i=0;i < len;i++){
                 var isBig = iP[i%len][2] ? 0 : 1; //wether circle is bigger than 180degree
                 //console.log(isBig)
-                //TODO somewhere here in the decision of how big the arc is, something goes wrong
                 var cake = "M"+c.x+","+c.y+"L"+iP[i%len][0]+','+iP[i%len][1]+"A"+r+','+r+',0,'+isBig+',0,'+iP[(i+1)%len][0]+','+iP[(i+1)%len][1]+"";
                 var outline = "M"+iP[i%len][0]+','+iP[i%len][1]+"A"+r+','+r+',0,'+isBig+',0,'+iP[(i+1)%len][0]+','+iP[(i+1)%len][1]+"";
 
