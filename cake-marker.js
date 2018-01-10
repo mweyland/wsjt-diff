@@ -95,10 +95,14 @@ L.SVG.include ({
                 p.setAttribute("cx", c.x);
                 p.setAttribute("cy", c.y);
                 p.setAttribute("r", r);
+                p.setAttribute("style","stroke:"+layer._colors[0]+";fill:"+layer._colors[0]);
+                p.setAttribute("fill-opacity","0.5");
+                p.setAttribute("stroke-width","5");
+                console.log("layer:" ,layer," colors",layer._colors[i]);
                 layer._paths.push(p);
             }else {
-                var i = layer._paths.length - 1 //last element...
-                var q = layer._paths[i]
+                var i = layer._paths.length - 1; //last element...
+                var q = layer._paths[i];
                 q.setAttribute("cx", c.x);
                 q.setAttribute("cy", c.y);
                 q.setAttribute("r", r);
