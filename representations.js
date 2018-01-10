@@ -23,8 +23,6 @@ var LogRepresentation = function(_input, _name){
 
 
 };
-
-
 //this is how you create member functions
 LogRepresentation.prototype.createHashByLocator = function(){
     console.log("Create Locator Hashmap");
@@ -53,8 +51,6 @@ LogRepresentation.prototype.createHashByLocator = function(){
     console.log("Processed Locator hashmap, max calls per loc:"+this.maxRX_Loc);
     this.hashByLoc = locHashmap;
 };
-
-
 LogRepresentation.prototype.setupMarkerLayer = function(){
     for( loc in this.hashByLoc ){
 
@@ -72,11 +68,7 @@ LogRepresentation.prototype.setupMarkerLayer = function(){
 
 
     }
-
-
-
 };
-
 LogRepresentation.prototype.addTo = function(map, control){
     this.markerLayer.addTo(map);
     control.addOverlay(this.markerLayer, this.name)
@@ -84,9 +76,7 @@ LogRepresentation.prototype.addTo = function(map, control){
 };
 LogRepresentation.prototype.getBounds = function(){
     return this.markerLayer.getBounds();
-}
-
-
+};
 //some helper functions so we don't need jQuery yet...
 function hasClass(ele,cls) {
     return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
@@ -94,7 +84,6 @@ function hasClass(ele,cls) {
 function addClass(ele,cls) {
     if (!hasClass(ele,cls)) ele.className += " "+cls;
 }
-
 function removeClass(ele,cls) {
     if (hasClass(ele,cls)) {
         var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
