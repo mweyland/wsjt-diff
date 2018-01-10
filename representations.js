@@ -125,7 +125,7 @@ LogComparator.prototype.addLog = function(log, name){
     }
 
     this._logs.push({hashmap:locHashmap, color:generateColor(),name:name});
-    console.log("Added a log to the logcomparator", log, " Name:", name, " locHashmap", locHashmap);
+    //console.log("Added a log to the logcomparator", log, " Name:", name, " locHashmap", locHashmap);
 
     this.updtLocHashmap();
     this.setupMarkerLayer();
@@ -167,7 +167,7 @@ LogComparator.prototype.setupMarkerLayer = function () {
                 pieces.push([avgSNR, color]);
             }
         }
-        console.log(pieces);
+        //console.log(pieces);
         var cakeMarker = L.marker.cakeMarker(maidenhead_to_latlon(loc), {pieces:pieces});
         this._curMarkers.push(cakeMarker);
         cakeMarker.addTo(this.markerLayer);
