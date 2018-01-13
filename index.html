@@ -31,7 +31,15 @@
             border-radius: 5px;
             padding-top: 60px;
         }
-        #dropzone-center{
+        #dropzone.active{
+            border-style: solid;
+            border-color: #35a2ff;
+            background-color: #bfe3ff;
+        }
+        #dropzone.active div{
+            color: #35a2ff;
+        }
+        #dropzone div{
             height: 60px;
         }
         .comp-control-parent{
@@ -66,8 +74,8 @@
 
             </div>
         </div>
-        <div id="dropzone" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondrop="drop(event)">
-            <div id="dropzone-center">
+        <div id="dropzone" ondragend="dragEnd(event)" ondragleave="dragEnd(event)" ondragover="dragOver(event)" ondrop="drop(event)">
+            <div>
                 Drop your <br>WSJT ALL.TXT <br>here!
             </div>
         </div>
