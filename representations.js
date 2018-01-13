@@ -179,7 +179,10 @@ LogComparator.prototype.setupMarkerLayer = function () {
 
 LogComparator.prototype.addTo = function (map, control) {
     this.markerLayer.addTo(map);
-    control.addOverlay(this.markerLayer, this.name)
+
+    if(typeof control != "undefined"){
+        control.addOverlay(this.markerLayer, this.name)
+    }
 };
 
 /*
