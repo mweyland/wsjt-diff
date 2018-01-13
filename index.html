@@ -25,9 +25,14 @@
             color: #ccc;
             border-style: dashed;
             border-color: #ccc;
-            line-height: 200px;
+            line-height: 20px;
+            height:200px;
             text-align: center;
             border-radius: 5px;
+            padding-top: 60px;
+        }
+        #dropzone-center{
+            height: 60px;
         }
         #dropzone.active{
             border-style: solid;
@@ -48,16 +53,21 @@
             <div class="card-body">
                 <h5 class="card-title">WSJT Diff</h5>
                 <h6 class="card-subtitle mb-2 text-muted">Geographical Diff of WSJT Logfiles</h6>
+                <div class="d-none d-md-block">
                 <p class="card-text">This is a small project that aims to provide a nice interface
                 to compare different WSJT logfiles.
                 All code is free and online on Github.
                </p>
                 <p class="font-weight-light"> Created by MrCircuitmatt and HB3YMB</p>
+                </div>
                 <a href="https://github.com/mweyland/wsjt-diff" target="_blank" class="card-link">WSJT-Diff on Github</a>
+
             </div>
         </div>
         <div id="dropzone" ondragend="dragEnd(event)" ondragover="dragOver(event)" ondrop="drop(event)">
-            Drop your WSJT ALL.TXT here!
+            <div id="dropzone-center">
+                Drop your <br>WSJT ALL.TXT <br>here!
+            </div>
         </div>
     </div>
     </div>
@@ -82,12 +92,14 @@
             accessToken: 'pk.eyJ1IjoiZm94dHJvdHQxMiIsImEiOiJjamMzamRmd3gwdDI5MzNyNmYyYzR3MXo2In0.zliegd2CbZ_LzzShoSQCvw'
         });
         tileLayer.addTo(map);
-        var controls = L.control.layers({"Mapbox Base": tileLayer},{},{collapsed: false});
-        controls.addTo(map)
+
+        //needed if we use the LogRepresentation Class, so we can toggle layers...
+        //var controls = L.control.layers({"Mapbox Base": tileLayer},{},{collapsed: false});
+        //controls.addTo(map)
 
 
         var logComparator = new LogComparator("Log comparison");
-        logComparator.addTo(map, controls);
+        logComparator.addTo(map);
 
         function dragOver(ev) {
             ev.preventDefault();
@@ -141,8 +153,9 @@
         function parseText(text, name){
             var wsjt_timeHashmap = wsjt_partition_log(text);
 
-            var log = new LogRepresentation(wsjt_timeHashmap, name);
-            log.addTo(map, controls)
+            //well, let us focus on the loc Comparator right now...
+            //var log = new LogRepresentation(wsjt_timeHashmap, name);
+            //log.addTo(map, controls)
 
             logComparator.addLog(wsjt_timeHashmap, name);
             //zoom map to bounds
