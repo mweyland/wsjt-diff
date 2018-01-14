@@ -47,6 +47,14 @@ function decode_from_line(line)
             //console.log("Failed to parse maidenhead locator for msg: "+ret.msg+" possible locator: "+locator);
         }
     }
+    var call = extract_call(ret.msg);
+    // FIXME: Check if it would be smarter to store null if the call failed to extract. Now we only store the
+    // property if we found a call and we have to use hasOwnProperty() to check for its presence later.
+    if(call)
+    {
+        ret.call = call;
+    }
+
     return ret
 }
 
@@ -163,6 +171,27 @@ function extract_locator(msg)
         {
             return locator;
         }
+    }
+    return null;
+}
+
+function extract_call(msg)
+{
+    // FIXME: This could potentially be merged with extract_locator()
+    var tokens = msg.trim().split(" ");
+    if(msg.startsWith("CQ ") && tokens.length == 4 && tokens[1] == "DX")
+    {
+        tokens.splice(1,1);
+    }
+    if(tokens.length == 3)
+    {
+        // Now the transmitting station's call sign is conveniently the
+        // second token always.
+        return tokens[1];
+    }
+    else
+    {
+        console.log("Failed to extract call from: "+msg);
     }
     return null;
 }
