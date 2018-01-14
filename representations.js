@@ -85,6 +85,7 @@ function addClass(ele,cls) {
     if (!hasClass(ele,cls)) ele.className += " "+cls;
 }
 function removeClass(ele,cls) {
+    //console.log("Remove Class:"+cls)
     if (hasClass(ele,cls)) {
         var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
         ele.className=ele.className.replace(reg,' ');
@@ -102,13 +103,13 @@ var LogComparator = function(_name){
     this._logs = []; //contains a locatorhashmap for each log
     this._locHashmap = {};
 };
-LogComparator.prototype.addLog = function(log, name){
-    //clear all markers here
-    for(m in this._curMarkers){
-        this._curMarkers[m].removeFrom(this.markerLayer);
 
-    }
-    this._curMarkers = [];
+
+LogComparator.prototype.addLog = function(log, name, controls){
+    var that = this;
+
+    var color = generateColor();
+
 
 
     //got a time based hashmap and now divide it into a locator-based hashmap
@@ -125,33 +126,66 @@ LogComparator.prototype.addLog = function(log, name){
             }
         }
     }
-
-    this._logs.push({hashmap:locHashmap, color:generateColor(),name:name});
+    var object = {hashmap:locHashmap, color:color, name:name, visible: true}
+    this._logs.push(object);
     //console.log("Added a log to the logcomparator", log, " Name:", name, " locHashmap", locHashmap);
 
     this.updtLocHashmap();
     this.setupMarkerLayer();
+
+    //we have to add controls here
+    controls.addLog(name, color, function(btn){
+        //this is called when the button is clicked
+       if(object.visible){
+           //is visible, toggle to invisible
+           console.log("Set log: "+name+" to invisible");
+
+           btn.setAttribute("style", "")
+
+           object.visible = false;
+       }else{
+           //is invisible, set visible
+           console.log("Set log: "+name+" to visible");
+
+           btn.setAttribute("style","background-color:"+color.toString()+";color:"+color.contrastColor().toString());
+
+            object.visible = true;
+       }
+
+        that.updtLocHashmap();
+        that.setupMarkerLayer();
+    });
 };
 
 LogComparator.prototype.updtLocHashmap = function () {
-    // update the big Locatorhasmap
+    //clear hashmap
+    this._locHashmap = {};
 
+    // update the big Locatorhasmap
     for(log in this._logs){
-        for(locator in this._logs[log].hashmap){
-            if( !(locator in this._locHashmap)){
-                this._locHashmap[locator] = {};
+        if(this._logs[log].visible){
+            for(locator in this._logs[log].hashmap){
+                if( !(locator in this._locHashmap)){
+                    this._locHashmap[locator] = {};
+                }
+                //TODO there might be a more elegant solution to this convolution here
+                this._locHashmap[locator][this._logs[log].name] = {logs: this._logs[log].hashmap[locator], color: this._logs[log].color}
             }
-            //TODO there might be a more elegant solution to this convolution here
-            this._locHashmap[locator][this._logs[log].name] = {logs: this._logs[log].hashmap[locator], color: this._logs[log].color}
         }
     }
 
-    console.log("Global Hashmap",this._locHashmap)
+    console.log("Global Hashmap:",this._locHashmap)
 };
 
 LogComparator.prototype.setupMarkerLayer = function () {
     //create a cake marker for each locator
-    console.log("SetupMarkerLayer...")
+    console.log("SetupMarkerLayer...");
+    //clear all markers here
+    for(m in this._curMarkers){
+        this._curMarkers[m].removeFrom(this.markerLayer);
+
+    }
+    this._curMarkers = [];
 
     for(loc in this._locHashmap){
         //for each locator

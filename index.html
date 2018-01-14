@@ -115,9 +115,6 @@
 
         var compControl = L.control.comparatorControl();
         compControl.addTo(map);
-        compControl.addLog("Test 1.txt");
-        compControl.addLog("Test 4.txt");
-
 
         var logComparator = new LogComparator("Log comparison");
         logComparator.addTo(map);
@@ -178,7 +175,7 @@
             //var log = new LogRepresentation(wsjt_timeHashmap, name);
             //log.addTo(map, controls)
 
-            logComparator.addLog(wsjt_timeHashmap, name);
+            logComparator.addLog(wsjt_timeHashmap, name, compControl);
             //zoom map to bounds
             //map.fitBounds(log.getBounds());
 
@@ -196,7 +193,8 @@
 
         // FOR YOUR PLEASURE
         // COMMENT IN PRODUCTION
-        parseText(log1, "Demo Log");
+        parseText(log1, "Demo Log 1");
+        parseText(log2, "Demo Log 2");
 
     </script>
 
