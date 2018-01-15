@@ -124,7 +124,7 @@
         var compControl = L.control.comparatorControl();
         compControl.addTo(map);
 
-        var logComparator = new LogComparator("Log comparison");
+        var logComparator = new LogComparator("Log comparison", compControl);
         logComparator.addTo(map);
 
         function dragOver(ev) {

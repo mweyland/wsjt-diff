@@ -92,8 +92,12 @@ function removeClass(ele,cls) {
     }
 }
 
-var LogComparator = function(_name){
+var LogComparator = function(_name, _controls){
     this.name = _name;
+    this.curUnit = "decibel";
+    this.controls = _controls;
+    this.controls.addButtonListener(this.unitChangeListener(this));
+
 
     console.log("New LogComparator instantiated")
 
@@ -105,7 +109,7 @@ var LogComparator = function(_name){
 };
 
 
-LogComparator.prototype.addLog = function(log, name, controls){
+LogComparator.prototype.addLog = function(log, name){
     var that = this;
 
     var color = generateColor();
@@ -134,7 +138,7 @@ LogComparator.prototype.addLog = function(log, name, controls){
     this.setupMarkerLayer();
 
     //we have to add controls here
-    controls.addLog(name, color, function(btn){
+    this.controls.addLog(name, color, function(btn){
         //this is called when the button is clicked
        if(object.visible){
            //is visible, toggle to invisible
@@ -177,6 +181,14 @@ LogComparator.prototype.updtLocHashmap = function () {
     console.log("Global Hashmap:",this._locHashmap)
 };
 
+LogComparator.prototype.unitChangeListener = function(logComparator){
+    return function(unit){
+        console.log("LogComparator: change unit to: "+unit);
+        logComparator.curUnit = unit;
+        logComparator.setupMarkerLayer();
+    }
+};
+
 LogComparator.prototype.setupMarkerLayer = function () {
     //create a cake marker for each locator
     console.log("SetupMarkerLayer...");
@@ -198,6 +210,11 @@ LogComparator.prototype.setupMarkerLayer = function () {
                 //get the SNR and color
                 //console.log(t);
                 var avgSNR = t.logs.map(function(a){return a.snr}).reduce(function(a,b){return (a+b)/2});
+
+                if(this.curUnit === "linear"){
+                    avgSNR = logToLinear(avgSNR);
+                }
+
                 var color = t.color.toString();
 
                 pieces.push([avgSNR, color]);
@@ -214,10 +231,17 @@ LogComparator.prototype.setupMarkerLayer = function () {
 LogComparator.prototype.addTo = function (map, control) {
     this.markerLayer.addTo(map);
 
-    if(typeof control != "undefined"){
+    if(typeof control !== "undefined"){
         control.addOverlay(this.markerLayer, this.name)
     }
 };
+/*
+* Some common conversions we might need
+* */
+function logToLinear(_dB){
+    return Math.pow(10,(_dB/10));
+}
+
 
 /*
 *  some helper color functions so we can generate nice colors per log...
@@ -243,7 +267,7 @@ Color.prototype.fromString = function(_string){
     h =  h.match(new RegExp('(.{'+h.length/3+'})', 'g'));
 
     for(var i=0; i<h.length; i++)
-        h[i] = parseInt(h[i].length==1? h[i]+h[i]:h[i], 16);
+        h[i] = parseInt(h[i].length===1? h[i]+h[i]:h[i], 16);
 
     this.r = h[0];
     this.g = h[1];

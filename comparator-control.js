@@ -1,6 +1,7 @@
 L.Control.ComparatorControl = L.Control.extend({
     onAdd: function(map) {
         //L.DomEvent.on();
+        var that = this;
 
         var parent = L.DomUtil.create('div');
         parent.setAttribute("class","comp-control-parent MenuContainer");
@@ -14,6 +15,7 @@ L.Control.ComparatorControl = L.Control.extend({
 
         upContainer.appendChild(this._root);
 
+        /* setup the buttons for toggling db/linear dB shall be the starting value*/
         var dwnContainer = L.DomUtil.create("div");
         dwnContainer.setAttribute("class","MenuRow");
         var loglinToggle = L.DomUtil.create("div");
@@ -37,6 +39,41 @@ L.Control.ComparatorControl = L.Control.extend({
         linButton.appendChild(linInput);
 
 
+
+        $(linButton).click(function(e){
+            e.preventDefault();
+            console.log("LinButton has been clicked");
+            $(logButton).removeClass("active");
+            $(linButton).addClass("active");
+            if(typeof that.btnListeners !== "undefined"){
+                that.btnListeners.forEach(function(fn){
+                    try{
+                        fn("linear")
+                    }catch (e){
+                        //
+                        console.log(e)
+                    }
+                })
+            }
+        });
+        $(logButton).click(function(e){
+            e.preventDefault();
+            console.log("LogButton has been clicked");
+            $(linButton).removeClass("active");
+            $(logButton).addClass("active");
+            if(typeof that.btnListeners !== "undefined"){
+                that.btnListeners.forEach(function(fn){
+                    try{
+                        fn("decibel")
+                    }catch (e){
+                        //do nothing...
+                        console.log(e)
+                    }
+                })
+            }
+        });
+
+
         loglinToggle.appendChild(logButton);
         loglinToggle.appendChild(linButton);
         dwnContainer.appendChild(loglinToggle);
@@ -47,6 +84,14 @@ L.Control.ComparatorControl = L.Control.extend({
         parent.appendChild(dwnContainer);
 
         return parent;
+    },
+
+    addButtonListener: function(fn){
+        //console.log("CompControls: add unit button listener");
+        if(typeof this.btnListeners === "undefined"){
+            this.btnListeners = []
+        }
+        this.btnListeners.push(fn);
     },
 
     onRemove: function(map) {
