@@ -202,26 +202,41 @@ LogComparator.prototype.setupMarkerLayer = function () {
     for(loc in this._locHashmap){
         //for each locator
         var pieces = [];
+        var tableRow = [];
         //console.log("..process locator", this._locHashmap[loc]);
         for (var log in this._locHashmap[loc]) {
             if (this._locHashmap[loc].hasOwnProperty(log)) {
                 //for each log of a locator
                 var t = this._locHashmap[loc][log];
+                var color = t.color.toString();
+
                 //get the SNR and color
                 //console.log(t);
                 var avgSNR = t.logs.map(function(a){return a.snr}).reduce(function(a,b){return (a+b)/2});
 
+                tableRow.push({snr:avgSNR, linear: logToLinear(avgSNR),color:color});
+
                 if(this.curUnit === "linear"){
                     avgSNR = logToLinear(avgSNR);
                 }
-
-                var color = t.color.toString();
 
                 pieces.push([avgSNR, color]);
             }
         }
         //console.log(pieces);
         var cakeMarker = L.marker.cakeMarker(maidenhead_to_latlon(loc), {pieces:pieces});
+
+        //create table for popup
+        var headerTbl = "<table class='table table-striped'><tr><th>Log</th><th>SNR</th><th>Linear</th></tr>";
+        tableRow.forEach(function(i){
+            headerTbl += "<tr><td style='background-color:"+i.color+"'></td><td>"+i.snr.toFixed(1)+"</td><td>"+i.linear.toFixed(3)+"</td></tr>"
+        });
+        headerTbl += "</table>";
+
+
+        console.log("Attach popup")
+        cakeMarker.bindPopup(headerTbl);
+        //console.log(cakeMarker);
         this._curMarkers.push(cakeMarker);
         cakeMarker.addTo(this.markerLayer);
     }
