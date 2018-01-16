@@ -8,6 +8,7 @@ L.SVG.include ({
         layer._paths = [];
         layer._outlines = [];
         this._layers[L.Util.stamp(layer)] = layer;
+
         if (!this._rootGroup) { this._initContainer(); }
     },
     _addCake: function(layer){
@@ -23,9 +24,12 @@ L.SVG.include ({
     _removeCake: function(layer){
         for(p in layer._paths){
             L.DomUtil.remove(layer._paths[p])
+            layer.removeInteractiveTarget(layer._paths[p]);
+
         }
         for(p in layer._outlines) {
             L.DomUtil.remove(layer._outlines[p])
+            layer.removeInteractiveTarget(layer._outlines[p]);
         }
         delete  this._layers[L.Util.stamp(layer)];
     },
@@ -82,17 +86,20 @@ L.SVG.include ({
                 //console.log(p);
                 if( hasChanged ){
                     var p = L.SVG.create("path");
+                    L.DomUtil.addClass(p, "leaflet-interactive");
                     p.setAttribute("d",cake);
                     p.setAttribute("style","fill:"+layer._colors[i]);
                     p.setAttribute("fill-opacity","0.5");
+                    layer.addInteractiveTarget(p);
                     layer._paths.push(p);
 
                     var q = L.SVG.create("path");
                     q.setAttribute("d",outline);
+                    L.DomUtil.addClass(q, "leaflet-interactive");
                     q.setAttribute("style","stroke:"+layer._colors[i]);
                     q.setAttribute("fill-opacity","0");
                     q.setAttribute("stroke-width","5");
-
+                    layer.addInteractiveTarget(q);
                     layer._outlines.push(q);
                 }else{
                     layer._paths[i].setAttribute("d",cake);
@@ -101,22 +108,24 @@ L.SVG.include ({
             }
         }else{
             //only one piece
+            var arc =  'a' + r + ',' + r + ' 0 1,0 ';
+            var circle = 'M' + (c.x - r) + ',' + c.y + arc + (r * 2) + ',0 ' + arc + (-r * 2) + ',0 ';
+
             if( hasChanged ) {
-                var p = L.SVG.create("circle");
-                p.setAttribute("cx", c.x);
-                p.setAttribute("cy", c.y);
-                p.setAttribute("r", r);
+
+                var p = L.SVG.create("path");
+                L.DomUtil.addClass(p, "leaflet-interactive");
+                p.setAttribute("d",circle);
                 p.setAttribute("style","stroke:"+layer._colors[0]+";fill:"+layer._colors[0]);
                 p.setAttribute("fill-opacity","0.5");
                 p.setAttribute("stroke-width","5");
                 //console.log("layer:" ,layer," colors",layer._colors[i]);
+                layer.addInteractiveTarget(p);
                 layer._paths.push(p);
             }else {
                 var i = layer._paths.length - 1; //last element...
                 var q = layer._paths[i];
-                q.setAttribute("cx", c.x);
-                q.setAttribute("cy", c.y);
-                q.setAttribute("r", r);
+                q.setAttribute("d",circle);
                 q.setAttribute("style","stroke:"+layer._colors[i]+";fill:"+layer._colors[i]);
                 q.setAttribute("fill-opacity","0.5");
                 q.setAttribute("stroke-width","5");
