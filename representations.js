@@ -227,14 +227,14 @@ LogComparator.prototype.setupMarkerLayer = function () {
         var cakeMarker = L.marker.cakeMarker(maidenhead_to_latlon(loc), {pieces:pieces});
 
         //create table for popup
-        var headerTbl = "<table class='table table-striped'><tr><th>Log</th><th>SNR</th><th>Linear</th></tr>";
+        var headerTbl = "<h4 class='text-center'>"+loc+"</h4><h6>AVG SNR per Log</h6><table class='table table-striped table-sm'><tr><th>Log</th><th>dB</th><th>Linear</th></tr>";
         tableRow.forEach(function(i){
             headerTbl += "<tr><td style='background-color:"+i.color+"'></td><td>"+i.snr.toFixed(1)+"</td><td>"+i.linear.toFixed(3)+"</td></tr>"
         });
         headerTbl += "</table>";
 
 
-        console.log("Attach popup")
+        //console.log("Attach popup")
         cakeMarker.bindPopup(headerTbl);
         //console.log(cakeMarker);
         this._curMarkers.push(cakeMarker);
